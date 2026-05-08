@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ─────────────────────────────────────── */
+@theme {
+  --color-cream: #FDFBF7;
+  --color-cream-dark: #F5F0E8;
+  --color-coral: #E88D82;
+  --color-coral-hover: #D97B70;
+  --color-coral-light: #F5C4BE;
+  --color-coral-glow: #E88D8266;
+  --color-charcoal: #333333;
+  --color-charcoal-light: #666666;
+  --color-divider: #E8E2D9;
+  --color-glass: rgba(255, 255, 255, 0.30);
+  --color-glass-border: rgba(255, 255, 255, 0.50);
+  --color-glass-heavy: rgba(255, 255, 255, 0.55);
+
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Base Layer ─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ── Glassmorphism Utility ──────────────────────────────── */
+.glass {
+  background: var(--color-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-glass-border);
+}
+
+.glass-heavy {
+  background: var(--color-glass-heavy);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--color-glass-border);
+}
+
+/* ── Organic Glow Effect ────────────────────────────────── */
+.glow-coral {
+  box-shadow:
+    0 8px 40px var(--color-coral-glow),
+    0 2px 16px rgba(232, 141, 130, 0.15);
+}
+
+/* ── Arch shape utility ─────────────────────────────────── */
+.arch {
+  border-radius: 4rem 4rem 1.5rem 1.5rem;
+}
+
+.arch-sm {
+  border-radius: 2.5rem 2.5rem 1rem 1rem;
+}
+
+/* ── Bloom overflow container ───────────────────────────── */
+.bloom-burst {
+  position: relative;
+  overflow: visible;
+}
+
+/* ── Selection color ────────────────────────────────────── */
+::selection {
+  background-color: var(--color-coral-light);
+  color: var(--color-charcoal);
+}
+
+/* Input focus ring */
+input:focus {
+  outline: 2px solid var(--color-coral);
+  outline-offset: 2px;
+}
+
+/* ── Soft pulsing glow keyframe ─────────────────────────── */
+@keyframes softPulse {
+  0%, 100% { box-shadow: 0 8px 40px var(--color-coral-glow); }
+  50% { box-shadow: 0 12px 56px rgba(232, 141, 130, 0.35); }
+}
+
+.pulse-glow {
+  animation: softPulse 3s ease-in-out infinite;
+}
+
+/* ── Hide scrollbar (drawer inner scroll) ───────────── */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
