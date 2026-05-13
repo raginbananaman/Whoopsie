@@ -1,23 +1,21 @@
 /**
- * Generates a Messenger deep-link URL with a pre-filled,
- * professionally formatted order message.
+ * Generates the plain text order message for the Clipboard Handshake.
  *
- * @param {Object} params
- * @param {string} params.bloom  - Selected bloom name
- * @param {string} params.variant - Selected variant label
- * @param {string} params.price  - Formatted price string
- * @param {string} params.room   - Guest room number
- * @returns {string} Full Messenger URL with encoded message
+ * @param {string} itemName  - Selected bloom name
+ * @param {string} variantLabel - Selected variant label
+ * @param {number} price  - Price
+ * @param {string} roomNumber   - Guest room number
+ * @returns {string} Plain text order message
  */
-export function buildMessengerUrl({ bloom, variant, price, room }) {
+export function generateOrderText(itemName, variantLabel, price, roomNumber) {
   const lines = [
     `── Whoopsie Daisies ──`,
     `Bespoke Floral Arrangement Request`,
     ``,
-    `Bloom: ${bloom}`,
-    `Variant: ${variant}`,
-    `Estimated Investment: ${price}`,
-    `Room Number: ${room || '—'}`,
+    `Bloom: ${itemName}`,
+    `Variant: ${variantLabel}`,
+    `Estimated Investment: ₱${price.toLocaleString()}`,
+    `Room Number: ${roomNumber || '—'}`,
     ``,
     `Submitted via the Bespoke Floral Builder.`,
     `Kindly confirm availability and arrange delivery at your earliest convenience.`,
@@ -25,8 +23,5 @@ export function buildMessengerUrl({ bloom, variant, price, room }) {
     `Thank you.`,
   ];
 
-  const message = lines.join('\n');
-  const encoded = encodeURIComponent(message);
-
-  return `https://m.me/whoopsiedaisies.ph?text=${encoded}`;
+  return lines.join('\n');
 }

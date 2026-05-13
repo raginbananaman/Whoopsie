@@ -5,7 +5,7 @@
  */
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { buildMessengerUrl } from "../utils/messenger";
+import { generateOrderText } from "../utils/messenger";
 
 const drawerVariants = {
   hidden: { y: "100%", opacity: 0 },
@@ -30,6 +30,7 @@ const backdropVariants = {
 export default function CheckoutDrawer({ item, onClose }) {
   const [selectedVariantId, setSelectedVariantId] = useState(null);
   const [roomNumber, setRoomNumber] = useState("");
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Reset selections when a new item is selected
   useEffect(() => {
@@ -43,24 +44,32 @@ export default function CheckoutDrawer({ item, onClose }) {
 
   if (!item) return null;
 
-  const handleSubmit = () => {
-    const variant = item.variants.find(v => v.id === selectedVariantId);
-    if (!variant) return;
-    
-    const formattedPrice = `₱${variant.price.toLocaleString()}`;
-    const url = buildMessengerUrl({
-      bloom: item.name,
-      variant: variant.label,
-      price: formattedPrice,
-      room: roomNumber,
-    });
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
+
 
   const canSubmit = selectedVariantId !== null && roomNumber.trim().length > 0;
 
   // Derive selected variant for the ticket summary
   const selectedVariant = item && item.variants ? item.variants.find(v => v.id === selectedVariantId) : null;
+
+  const handleConciergeRequest = async (e) => {
+    e.preventDefault();
+    if (!canSubmit || isRedirecting) return;
+
+    const message = generateOrderText(item.name, selectedVariant.label, selectedVariant.price, roomNumber);
+    
+    try {
+      await navigator.clipboard.writeText(message);
+    } catch (err) {
+      console.error("Clipboard write failed:", err);
+    }
+
+    setIsRedirecting(true);
+
+    setTimeout(() => {
+      window.open('https://www.messenger.com/t/whoopsiedaisiesmnl', '_blank', 'noopener,noreferrer');
+      setIsRedirecting(false);
+    }, 2500);
+  };
 
   return (
     <>
@@ -222,17 +231,19 @@ export default function CheckoutDrawer({ item, onClose }) {
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#FDFBF7] via-[#FDFBF7] to-transparent">
           <div className="max-w-md mx-auto">
             <button
-              onClick={handleSubmit}
-              disabled={!canSubmit}
+              onClick={handleConciergeRequest}
+              disabled={!canSubmit || isRedirecting}
               className={`
-                w-full py-4 rounded-full font-body font-semibold text-lg transition-all
-                ${canSubmit
-                  ? "bg-coral text-white shadow-[0_8px_30px_rgba(232,141,130,0.4)] hover:bg-[#D97B70] active:scale-[0.98]"
-                  : "bg-charcoal/5 text-charcoal-light/40 cursor-not-allowed"
+                w-full py-4 block text-center rounded-full font-body font-semibold text-lg transition-all duration-300
+                ${isRedirecting 
+                  ? "bg-[#333333] text-[#FDFBF7] animate-pulse"
+                  : canSubmit
+                    ? "bg-coral text-white shadow-[0_8px_30px_rgba(232,141,130,0.4)] hover:bg-[#D97B70] active:scale-[0.98]"
+                    : "bg-charcoal/5 text-charcoal-light/40 cursor-not-allowed pointer-events-none"
                 }
               `}
             >
-              Request via Concierge
+              {isRedirecting ? 'Order Copied! Please PASTE in the chat ➔' : 'Request via Concierge'}
             </button>
           </div>
         </div>
