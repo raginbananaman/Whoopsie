@@ -57,18 +57,19 @@ export default function CheckoutDrawer({ item, onClose }) {
 
     const message = generateOrderText(item.name, selectedVariant.label, selectedVariant.price, roomNumber);
     
+    setIsRedirecting(true);
+
     try {
       await navigator.clipboard.writeText(message);
     } catch (err) {
       console.error("Clipboard write failed:", err);
     }
 
-    setIsRedirecting(true);
-
+    window.location.href = 'https://m.me/whoopsiedaisiesmnl';
+    
     setTimeout(() => {
-      window.open('https://www.messenger.com/t/whoopsiedaisiesmnl', '_blank', 'noopener,noreferrer');
       setIsRedirecting(false);
-    }, 2500);
+    }, 2000);
   };
 
   return (
